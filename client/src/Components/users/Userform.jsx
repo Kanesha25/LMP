@@ -1,22 +1,61 @@
 import { Grid, Input, Typography, Button } from "@mui/material";
 import { useEffect, useState } from "react";
+import Axios from "axios";
 
-const Userform = ({ addUser, updateUser, submitted, data, isEdit }) => {
-  //id and set id state variable lesa hadunnwai
+const Userform = ({ isUpdated, setIsEdit, setIsUpdated, data, isEdit }) => {
   const [id, setId] = useState("");
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const updateUser = () => {
+    const updatedUserData = {
+      username: username,
+      email: email,
+    };
+    console.log("updatedUserData", updatedUserData);
+
+    Axios.put(`http://localhost:3000/api/users/${id}`, updatedUserData)
+      .then((response) => {
+        console.log("User updated successfully.", response);
+        setIsUpdated(!isUpdated);
+      })
+      .catch((error) => {
+        console.error("Axios Error:", error);
+      });
+  };
 
   useEffect(() => {
-    if (!submitted) {
-      setId(0);
-      setName("");
-    }
-  }, [submitted]);
+    setIsEdit(false);
+    setId("");
+    setUsername("");
+    setEmail("");
+    setPassword("");
+  }, [isUpdated]);
+
+  const addUser = () => {
+    // e.preventDefault();
+    Axios.post("http://localhost:3000/api/users/signup", {
+      username: username,
+      email: email,
+      password: password,
+    })
+      .then((response) => {
+        console.log("User added successfully.", response);
+      })
+      .then(() => {
+        setIsUpdated(!isUpdated);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   useEffect(() => {
     if (data?.id && data.id !== 0) {
       setId(data.id);
-      setName(data.name);
+      setUsername(data.username);
+      setEmail(data.email);
     }
   }, [data]);
 
@@ -32,31 +71,83 @@ const Userform = ({ addUser, updateUser, submitted, data, isEdit }) => {
     >
       <Grid item xs={12}>
         <Typography component={"h1"} sx={{ color: "#0000000" }}>
-          User from
+          <h3>User form</h3>
+          <Button
+            sx={{
+              width: "100px",
+              margin: "auto",
+              marginBottom: "20px",
+              backgroundColor: "#00c6e6",
+              color: "#000000",
+              marginLeft: "15px",
+              marginTop: "20px",
+
+              "&:hover": {
+                opacity: "0.7",
+                backgroundColor: "#00c6e6",
+              },
+            }}
+            onClick={() => {
+              setIsEdit(false);
+              setId("");
+              setUsername("");
+              setEmail("");
+              setPassword("");
+            }}
+          >
+            Add user
+          </Button>
         </Typography>
       </Grid>
+
+      {isEdit && (
+        <Grid item xs={12} sm={6} sx={{ display: "flex" }}>
+          <Typography
+            component={"label"}
+            htmlFor="id"
+            sx={{
+              color: "#000000",
+              marginRight: "20px",
+              fontSize: "16px",
+              width: "100px",
+              display: "black",
+            }}
+          >
+            ID
+          </Typography>
+          <Input
+            type="name"
+            id="id"
+            name="id"
+            disabled
+            sx={{ width: "400px" }}
+            value={id}
+            // onChange={(e) => setId(e.target.value)}
+          />
+        </Grid>
+      )}
 
       <Grid item xs={12} sm={6} sx={{ display: "flex" }}>
         <Typography
           component={"label"}
           htmlFor="id"
           sx={{
-            color: "#000000",
+            color: "#00000",
             marginRight: "20px",
             fontSize: "16px",
             width: "100px",
             display: "black",
           }}
         >
-          ID
+          Username
         </Typography>
         <Input
-          type="number"
-          id="id"
-          name="id"
+          type="name"
+          id="username"
+          name="username"
           sx={{ width: "400px" }}
-          value={id}
-          onChange={(e) => setId(e.target.value)}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
         />
       </Grid>
 
@@ -72,21 +163,48 @@ const Userform = ({ addUser, updateUser, submitted, data, isEdit }) => {
             display: "black",
           }}
         >
-          Name
+          Email
         </Typography>
         <Input
-          type="name"
-          id="name"
-          name="name"
+          type="email"
+          id="email"
+          name="email"
           sx={{ width: "400px" }}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
       </Grid>
+
+      {!isEdit && (
+        <Grid item xs={12} sm={6} sx={{ display: "flex" }}>
+          <Typography
+            component={"label"}
+            htmlFor="id"
+            sx={{
+              color: "#00000",
+              marginRight: "20px",
+              fontSize: "16px",
+              width: "100px",
+              display: "black",
+            }}
+          >
+            Password
+          </Typography>
+          <Input
+            type="password"
+            id="password"
+            name="password"
+            sx={{ width: "400px" }}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </Grid>
+      )}
 
       <Button
         sx={{
           margin: "auto",
+          width: "100px",
           marginBottom: "20px",
           backgroundColor: "#00c6e6",
           color: "#000000",
@@ -98,9 +216,7 @@ const Userform = ({ addUser, updateUser, submitted, data, isEdit }) => {
             backgroundColor: "#00c6e6",
           },
         }}
-        onClick={() =>
-          isEdit ? updateUser({ id, name }) : addUser({ id, name })
-        }
+        onClick={() => (isEdit ? updateUser() : addUser())}
       >
         {isEdit ? "Update" : "Add"}
       </Button>

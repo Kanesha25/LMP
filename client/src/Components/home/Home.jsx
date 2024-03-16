@@ -8,7 +8,12 @@ const Home = () => {
         <h1>WELCOME TO SRI LANKA</h1>
         {/* Use Link component to navigate */}
         <Link to="/users">
-          <button className="users-button">USERS</button>
+          <button
+            className="users-button"
+            style={{ marginLeft: "20px", width: "100px" }}
+          >
+            USERS
+          </button>
         </Link>
       </header>
     </div>

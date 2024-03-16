@@ -9,10 +9,11 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  Axios.defaults.withCredentials = true;
+  // Axios.defaults.withCredentials = true;
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    Axios.post("http://localhost:3000/auth/login", {
+    Axios.post("http://localhost:3000/api/users/login", {
       email,
       password,
     })

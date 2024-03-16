@@ -8,15 +8,34 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import Axios from "axios";
 
-const UsersTable = ({ rows, selectedUser, deleteUser }) => {
+const UsersTable = ({ isUpdated, setIsUpdated, rows, selectedUser }) => {
+  const deleteUser = (id) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
+    if (!confirmed) {
+      return; // User canceled the operation, do nothing
+    }
+
+    Axios.delete(`http://localhost:3000/api/users/${id.id}`)
+      .then((response) => {
+        console.log("User deleted successfully.", response);
+        setIsUpdated(!isUpdated);
+      })
+      .catch((error) => {
+        console.error("Axios Error:", error);
+      });
+  };
+
   return (
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
           <TableRow>
             <TableCell>ID</TableCell>
-            <TableCell>Name</TableCell>
+            <TableCell>Username</TableCell>
             <TableCell>Email</TableCell>
             <TableCell>Action</TableCell>
           </TableRow>
@@ -28,27 +47,34 @@ const UsersTable = ({ rows, selectedUser, deleteUser }) => {
             rows.length > 0 ? (
               rows.map((row) => (
                 <TableRow
-                  key={row.id}
+                  key={row._id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
-                    {row.id}
+                    {row._id}
                   </TableCell>
                   <TableCell component="th" scope="row">
-                    {row.name}
+                    {row.username}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {row.email}
                   </TableCell>
                   <TableCell>
                     <Button
                       sx={{ margin: "0px 10px" }}
                       onClick={() =>
-                        selectedUser({ id: row.id, name: row.name })
+                        selectedUser({
+                          id: row._id,
+                          username: row.username,
+                          email: row.email,
+                        })
                       }
                     >
                       Update
                     </Button>
                     <Button
                       sx={{ margin: "0px 10px" }}
-                      onClick={() => deleteUser({ id: row.id })}
+                      onClick={() => deleteUser({ id: row._id })}
                     >
                       Delete
                     </Button>

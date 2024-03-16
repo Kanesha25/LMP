@@ -2,27 +2,36 @@ import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
-import cookieParser from "cookie-parser";
 import { UserRouter } from "./routes/user.js";
 dotenv.config();
 
 const app = express();
-app.use(express.json());
-app.use(
-  cors({
-    origin: ["http://localhost:5173"],
-    credentials: true,
-  })
-);
-app.use(cookieParser());
-app.use("/auth", UserRouter);
 
-mongoose.connect(
-  "mongodb+srv://psajjitha:sajjitha@cluster0.mnfwwyq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-);
+// Define CORS options
+// const corsOptions = {
+//   origin: "*", // Allow requests from any origin
+//   credentials: true, // Allow credentials
+// };
+// Apply CORS middleware with options
+
+// app.use(cors(corsOptions));
+
+app.use(cors());
+app.use(express.json());
+
+app.use("/api/users", UserRouter);
+
+const connect = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("Connected to Mongo DB");
+  } catch (error) {
+    console.log("MongoDB Error:", error);
+  }
+};
+
+connect();
 
 app.listen(process.env.PORT, () => {
-  console.log("Server is Running");
+  console.log("Server is Running on PORT:", process.env.PORT);
 });
-
-//node modules are not installed

@@ -20,6 +20,24 @@ export const signUp = async (req, res) => {
   return res.json({ status: true, message: "Record registered" });
 };
 
+export const addUser = async (req, res) => {
+  const { username, email } = req.body;
+  const user = await User.findOne({ email });
+  if (user) {
+    return res.json({ message: "User already exists" });
+  }
+
+  const hashPassword = await bcrypt.hash("default123", 10);
+  const newUser = new User({
+    username,
+    email,
+    password: hashPassword,
+  });
+
+  await newUser.save();
+  return res.json({ status: true, message: "Record registered" });
+};
+
 export const login = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
