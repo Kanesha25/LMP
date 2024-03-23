@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import "./signup.css";
+import "./coursesignup.css";
 import Axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
-const Signup = () => {
-  const [username, setUsername] = useState("");
+const CourseSignup = () => {
+  const [coursename, setCoursename] = useState("");
+  const [courseId, setCourseId] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -12,12 +13,9 @@ const Signup = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!username || !email || !password) {
-      alert("Please fill all the fields");
-      return;
-    }
-    Axios.post("http://localhost:3000/api/users/signup", {
-      username,
+    Axios.post("http://localhost:3000/api/courses/", {
+      courseId,  
+      coursename,
       email,
       password,
     })
@@ -32,14 +30,21 @@ const Signup = () => {
   };
 
   return (
-    <div className="sign-up-container">
-      <form className="sign-up-form" onSubmit={handleSubmit}>
-        <h2>Sign Up</h2>
-        <label htmlFor="username">Username:</label>
+    <div style={{ background: "#dddddd" }} className="sign-up-container">
+      <form style={{ background: "#EEE3CD" }} className="sign-up-form" onSubmit={handleSubmit}>
+        <h2>Course Registration</h2>
+        <label htmlFor="coursename">Coursename:</label>
         <input
           type="text"
-          placeholder="Username"
-          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Coursename"
+          onChange={(e) => setCoursename(e.target.value)}
+        />
+
+        <label htmlFor="courseId">CourseId:</label>
+        <input
+          type="text"
+          placeholder="CourseId"
+          onChange={(e) => setCourseId(e.target.value)}
         />
 
         <label htmlFor="email">Email:</label>
@@ -60,11 +65,11 @@ const Signup = () => {
 
         <button type="submit">Sign Up</button>
         <p>
-          Have an account? <Link to="/login">Login</Link>
+          Have an account? <Link to="/courselogin">Login</Link>
         </p>
       </form>
     </div>
   );
 };
 
-export default Signup;
+export default CourseSignup;

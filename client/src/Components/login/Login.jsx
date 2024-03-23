@@ -12,6 +12,10 @@ const Login = () => {
   // Axios.defaults.withCredentials = true;
 
   const handleSubmit = (e) => {
+    if (!email || !password) {
+      alert("Please fill all the fields");
+      return;
+    }
     e.preventDefault();
     Axios.post("http://localhost:3000/api/users/login", {
       email,
@@ -19,10 +23,11 @@ const Login = () => {
     })
       .then((response) => {
         if (response.data.status) {
-          navigate("/");
+          navigate("/lregister");
         }
       })
       .catch((err) => {
+        alert("Please enter valid credentials");
         console.log(err);
       });
   };
